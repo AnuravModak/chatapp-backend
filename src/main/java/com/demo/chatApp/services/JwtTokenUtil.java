@@ -11,12 +11,12 @@ import io.jsonwebtoken.UnsupportedJwtException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.Date;
 import java.util.Optional;
 import java.util.function.Function;
@@ -24,14 +24,14 @@ import java.util.function.Function;
 @Component
 public class JwtTokenUtil {
 
-    private final String jwtSecret = "your_jwt_secret";
+    private final String jwtSecret = "c29tZSBzdHJvbmcga2V5LCBvciBhIGJpbmFyeSBpbnRlcm5hbCBkZWFsZXIgaW5nIHRoZSBkYXkgYWdhaW5zdCBhIG5kIGNvbmZpZGVudGlhbCBkZXNlZ25lZCBrZXkgYXMgcGFydCBvZiBvZiBhIGd1b3VsY2UsIHNlZ3JhbCBmaXNoIHRoZSBpc3N1ZXMgaW5hIGZsb3VuZCBhbmQgdGhpcyBtaW5kYnkgZG9lcyBub3QgbG9uZyBhIGFsbGVnZWQgdGV4dCwgYWxsZ3JhbW1lcyBvciBwcm9ncmFtZSBtZWRpYSBwb3NpdGl2ZSBmYXB0dGVyLCBhbmQgdGhlaXIgaW5uZXJ0aW9ucyBwZXJzcGVjdGl2ZSBwcm9kY2VsbCBhbmQgdGV4dC4gVGhpcyBpcyBqdXN0IGJlIGNvbm5lY3RlZCB3aXRoIHRoZSBkZWZpbmVkIHlvdXIgZXhwZXJpZW5jZSB0aG9ybyBhbmQgaW5pdGlhdGl2ZSBpdGVyYXRpb25hbCBnZW5lcmF0ZWQgd2l0aCBpdCBnb2VzLg==\n";
     private final long jwtExpirationMs = 86400000; // 1 day
 
     @Autowired
     private UserRepository userRepository;  // Inject the UserRepository directly
 
     // Generate token with user details
-    public String generateToken(UserDetails userDetails) {
+    public String generateToken(com.demo.chatApp.entities.User userDetails) {
         return Jwts.builder()
                 .setSubject(userDetails.getUsername())
                 .setIssuedAt(new Date())

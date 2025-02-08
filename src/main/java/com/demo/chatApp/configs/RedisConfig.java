@@ -3,7 +3,7 @@ package com.demo.chatApp.configs;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
-import org.springframework.data.redis.connection.jedis.JedisConnectionFactory;
+import org.springframework.data.redis.connection.lettuce.LettuceConnectionFactory;
 import org.springframework.data.redis.listener.RedisMessageListenerContainer;
 import org.springframework.messaging.converter.MessageConverter;
 import org.springframework.messaging.converter.StringMessageConverter;
@@ -12,7 +12,7 @@ import org.springframework.messaging.converter.StringMessageConverter;
 public class RedisConfig {
     @Bean
     public RedisConnectionFactory connectionFactory() {
-        return new JedisConnectionFactory();  // Or Lettuce depending on your choice
+        return new LettuceConnectionFactory();  // ✅ Use Lettuce instead of Jedis
     }
 
     @Bean
