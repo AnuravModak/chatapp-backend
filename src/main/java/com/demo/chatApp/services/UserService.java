@@ -12,6 +12,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -34,6 +35,10 @@ public class UserService {
         return userRepository.findByUsername(username);
     }
 
+    public List<User> findAllUser(){
+        return  userRepository.findAll();
+    }
+
     public User save(User user) {
         return userRepository.save(user);
     }
@@ -54,7 +59,6 @@ public class UserService {
     }
 
     public String loginUser(String username, String password){
-        System.out.println(username+" : "+ password);
         Optional<User> userOpt=userRepository.findByUsername(username);
 
         if (userOpt.isPresent() && passwordEncoder.matches(password,userOpt.get().getPassword())){

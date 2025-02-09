@@ -6,6 +6,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.Type;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
@@ -22,13 +23,11 @@ public class Messages {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private UUID id;
 
-    @ManyToOne
-    @JoinColumn(name = "sender_id", nullable = false)
-    private User sender;
+    @Column(name = "sender_id", nullable = false)
+    private UUID sender;
 
-    @ManyToOne
-    @JoinColumn(name = "receiver_id", nullable = false)
-    private User receiver;
+    @Column(name = "receiver_id", nullable = false)
+    private UUID receiver;
 
     @Column(nullable = false)
     private String content;  // Encrypted content
@@ -41,7 +40,7 @@ public class Messages {
     public Messages() {
     }
 
-    public Messages(UUID id, User sender, User receiver, String content, LocalDateTime timestamp, boolean isRead) {
+    public Messages(UUID id, UUID sender, UUID receiver, String content, LocalDateTime timestamp, boolean isRead) {
         this.id = id;
         this.sender = sender;
         this.receiver = receiver;
@@ -58,19 +57,19 @@ public class Messages {
         this.id = id;
     }
 
-    public User getSender() {
+    public UUID getSender() {
         return sender;
     }
 
-    public void setSender(User sender) {
+    public void setSender(UUID sender) {
         this.sender = sender;
     }
 
-    public User getReceiver() {
+    public UUID getReceiver() {
         return receiver;
     }
 
-    public void setReceiver(User receiver) {
+    public void setReceiver(UUID receiver) {
         this.receiver = receiver;
     }
 
