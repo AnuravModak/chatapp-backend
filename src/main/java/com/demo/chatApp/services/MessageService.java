@@ -1,5 +1,6 @@
 package com.demo.chatApp.services;
 
+import com.demo.chatApp.entities.MessageDTO;
 import com.demo.chatApp.entities.Messages;
 import com.demo.chatApp.repos.MessageRepository;
 import com.fasterxml.jackson.databind.deser.std.UUIDDeserializer;
@@ -13,6 +14,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -33,6 +35,16 @@ public class MessageService {
 
     public List<Messages> getMessages(UUID userId) {
         return messageRepository.findBySenderOrReceiver(userId, userId);
+    }
+
+    public void markMessageAsRead(UUID messageId){
+        Optional<Messages> messagesOptional=messageRepository.findById(messageId);
+        if (messagesOptional.isPresent()){
+            Messages message= messagesOptional.get();
+            message.setRead(true);
+            messageRepository.save(message);
+            messagingTemplate.convertAndSendToUser(message.getSender().toString(),"/queue/read-receipts",messageId);
+        }
     }
 
     public Messages save(Messages message) {

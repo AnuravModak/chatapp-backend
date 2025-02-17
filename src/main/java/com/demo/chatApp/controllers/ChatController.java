@@ -1,6 +1,7 @@
 package com.demo.chatApp.controllers;
 
 import com.demo.chatApp.entities.MessageDTO;
+import com.demo.chatApp.entities.MessageStatus;
 import com.demo.chatApp.entities.Messages;
 import com.demo.chatApp.entities.User;
 import com.demo.chatApp.repos.MessageRepository;
@@ -44,7 +45,8 @@ public class ChatController {
                     messageDTO.getReceiver(),
                     messageDTO.getContent(),
                     LocalDateTime.now(),
-                    false
+                    false,
+                    MessageStatus.SENT.toString()
             );
 
             messagingTemplate.convertAndSendToUser(
@@ -61,5 +63,7 @@ public class ChatController {
                     .body("Error sending message: " + e.getMessage());
         }
     }
+
+
 
 }

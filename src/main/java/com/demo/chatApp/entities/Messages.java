@@ -37,16 +37,21 @@ public class Messages {
 
     private boolean isRead;
 
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private MessageStatus status = MessageStatus.SENT;
+
     public Messages() {
     }
 
-    public Messages(UUID id, UUID sender, UUID receiver, String content, LocalDateTime timestamp, boolean isRead) {
+    public Messages(UUID id, UUID sender, UUID receiver, String content, LocalDateTime timestamp, boolean isRead, MessageStatus status) {
         this.id = id;
         this.sender = sender;
         this.receiver = receiver;
         this.content = content;
         this.timestamp = timestamp;
         this.isRead = isRead;
+        this.status = status;
     }
 
     public UUID getId() {
@@ -95,5 +100,13 @@ public class Messages {
 
     public void setRead(boolean read) {
         isRead = read;
+    }
+
+    public MessageStatus getStatus() {
+        return status;
+    }
+
+    public void setStatus(MessageStatus status) {
+        this.status = status;
     }
 }

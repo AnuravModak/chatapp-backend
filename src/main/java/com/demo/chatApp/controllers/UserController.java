@@ -9,6 +9,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/users")
@@ -22,6 +24,33 @@ public class UserController {
         List<User> users= userService.findAllUser();
         return ResponseEntity.status(HttpStatus.OK).body(users);
     }
+
+    @GetMapping("admin/user/{userId}")
+    public ResponseEntity<Optional<User>> getUserById(@PathVariable String userId){
+        Optional<User> user=userService.findByUserId(userId);
+        return ResponseEntity.status(HttpStatus.OK).body(user);
+    }
+
+    @PostMapping("/online-status")
+    public ResponseEntity<String> updateUserOnlineStatus(
+            @RequestParam String userId,
+            @RequestParam boolean isOnline) {
+        UUID uuidUserId = UUID.fromString(userId);
+        userService.updateUserOnlineStatus(uuidUserId, isOnline);
+        return ResponseEntity.ok("User online status updated");
+    }
+
+    @PostMapping("/typing-status")
+    public ResponseEntity<String> notifyTyping(
+            @RequestParam String senderId,
+            @RequestParam String receiverId,
+            @RequestParam boolean isTyping) {
+        UUID uuidSenderId = UUID.fromString(senderId);
+        UUID uuidReceiverId = UUID.fromString(receiverId);
+        userService.notifyTyping(uuidSenderId, uuidReceiverId, isTyping);
+        return ResponseEntity.ok("Typing status updated");
+    }
+
 
 
     @PostMapping("/register")

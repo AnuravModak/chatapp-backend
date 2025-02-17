@@ -11,6 +11,8 @@ import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.List;
 import java.util.UUID;
@@ -31,12 +33,19 @@ public class MessageController {
 
 
 
-    @MessageMapping("/sendMessage")
-    @SendTo("/queue/messages")
-    public Messages sendMessage(Messages message) {
-        // You could save the message to the database here
-        messagingTemplate.convertAndSendToUser(message.getReceiver().toString(), "/queue/messages", message);
-        return message;
+//    @MessageMapping("/sendMessage")
+//    @SendTo("/queue/messages")
+//    public Messages sendMessage(Messages message) {
+//        // You could save the message to the database here
+//        messagingTemplate.convertAndSendToUser(message.getReceiver().toString(), "/queue/messages", message);
+//        return message;
+//    }
+
+    @PostMapping("/read-receipt")
+    public ResponseEntity<String> markMessageAsRead(@RequestParam String messageId) {
+        UUID uuidMessageId = UUID.fromString(messageId);
+        messageService.markMessageAsRead(uuidMessageId);
+        return ResponseEntity.ok("Message marked as read");
     }
 
     @GetMapping("/admin/getMessages/{senderId}/{receiverId}")

@@ -1,11 +1,15 @@
 package com.demo.chatApp.services;
 
+import com.demo.chatApp.entities.TypingStatus;
+import com.demo.chatApp.entities.TypingStatusMessage;
 import com.demo.chatApp.entities.User;
+import com.demo.chatApp.entities.UserStatus;
 import com.demo.chatApp.exceptions.EmailAlreadyInUseException;
 import com.demo.chatApp.exceptions.InvalidCredentialsException;
 import com.demo.chatApp.exceptions.UsernameAlreadyInUseException;
 import com.demo.chatApp.repos.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -14,6 +18,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 @Service
 public class UserService {
@@ -27,12 +32,25 @@ public class UserService {
     private  JwtTokenUtil jwtUtil;
 
     @Autowired
+    private SimpMessagingTemplate messagingTemplate;
+
+    @Autowired
     public UserService(PasswordEncoder passwordEncoder) {
         this.passwordEncoder = (BCryptPasswordEncoder) passwordEncoder;
     }
 
     public Optional<User> findByUsername(String username) {
         return userRepository.findByUsername(username);
+    }
+
+    public Optional<User> findByUserId(String id) {
+        try {
+            UUID uuid = UUID.fromString(id);
+            return userRepository.findUserById(uuid);
+        } catch (IllegalArgumentException e) {
+            System.err.println("Invalid UUID format: " + id);
+            return Optional.empty();
+        }
     }
 
     public List<User> findAllUser(){
@@ -96,6 +114,19 @@ public class UserService {
         builder.password(user.get().getPassword());  // Set password
 
         return builder.build();
+    }
+
+    public void updateUserOnlineStatus(UUID userId, boolean isOnline){
+        userRepository.updateUserOnlineStatus(userId, isOnline);
+        messagingTemplate.convertAndSend("/topic/online-status", new UserStatus(userId, isOnline));
+    }
+
+    public void notifyTyping(UUID senderId, UUID receiverId, boolean isTyping) {
+        TypingStatus typingStatus = isTyping ? TypingStatus.TYPING : TypingStatus.NOT_TYPING;
+
+        messagingTemplate.convertAndSendToUser(
+                receiverId.toString(), "/queue/typing", new TypingStatusMessage(senderId, typingStatus)
+        );
     }
 
     // Update user profile

@@ -37,11 +37,20 @@ public class User {
 
     private String oauthProvider;
     private String oauthId;
+    @Column(name = "is_online", nullable = false)
+    private boolean isOnline = false;
+
+    @Column(name = "last_seen")
+    private LocalDateTime lastSeen;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "typing_status", nullable = false)
+    private TypingStatus typingStatus = TypingStatus.NOT_TYPING;
 
     public User() {
     }
 
-    public User(UUID id, String username, String email, String password, LocalDateTime createdAt, String oauthProvider, String oauthId) {
+    public User(UUID id, String username, String email, String password, LocalDateTime createdAt, String oauthProvider, String oauthId, boolean isOnline, LocalDateTime lastSeen) {
         this.id = id;
         this.username = username;
         this.email = email;
@@ -49,6 +58,9 @@ public class User {
         this.createdAt = createdAt;
         this.oauthProvider = oauthProvider;
         this.oauthId = oauthId;
+        this.isOnline = isOnline;
+        this.lastSeen = lastSeen;
+
     }
 
     public UUID getId() {
@@ -105,5 +117,29 @@ public class User {
 
     public void setOauthId(String oauthId) {
         this.oauthId = oauthId;
+    }
+
+    public boolean isOnline() {
+        return isOnline;
+    }
+
+    public void setOnline(boolean online) {
+        isOnline = online;
+    }
+
+    public LocalDateTime getLastSeen() {
+        return lastSeen;
+    }
+
+    public void setLastSeen(LocalDateTime lastSeen) {
+        this.lastSeen = lastSeen;
+    }
+
+    public TypingStatus getTypingStatus() {
+        return typingStatus;
+    }
+
+    public void setTypingStatus(TypingStatus typingStatus) {
+        this.typingStatus = typingStatus;
     }
 }

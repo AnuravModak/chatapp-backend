@@ -1,5 +1,6 @@
 package com.demo.chatApp.repos;
 
+import com.demo.chatApp.entities.MessageStatus;
 import com.demo.chatApp.entities.Messages;
 import io.lettuce.core.dynamic.annotation.Param;
 import jakarta.transaction.Transactional;
@@ -11,7 +12,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
-public interface MessageRepository extends JpaRepository<Messages, Long> {
+public interface MessageRepository extends JpaRepository<Messages, UUID> {
     @Query("SELECT m FROM Messages m WHERE (m.sender = :user1 AND m.receiver = :user2) OR (m.sender = :user2 AND m.receiver = :user1) ORDER BY m.timestamp ASC")
     List<Messages> findChatHistory(@Param("user1") UUID user1, @Param("user2") UUID user2);
 
@@ -19,12 +20,14 @@ public interface MessageRepository extends JpaRepository<Messages, Long> {
 
     @Modifying
     @Transactional
-    @Query(value = "INSERT INTO messages (id, sender_id, receiver_id, content, timestamp, is_read) " +
-            "VALUES (:id, :senderId, :receiverId, :content, :timestamp, :isRead)", nativeQuery = true)
+    @Query(value = "INSERT INTO messages (id, sender_id, receiver_id, content, timestamp, is_read, status) " +
+            "VALUES (:id, :sender, :receiver, :content, :timestamp, :isRead, :status)",
+            nativeQuery = true)
     void insertMessage(@Param("id") UUID id,
-                       @Param("senderId") UUID senderId,
-                       @Param("receiverId") UUID receiverId,
+                       @Param("sender") UUID sender,
+                       @Param("receiver") UUID receiver,
                        @Param("content") String content,
                        @Param("timestamp") LocalDateTime timestamp,
-                       @Param("isRead") boolean isRead);
+                       @Param("isRead") boolean isRead,
+                       @Param("status") String status);
 }
